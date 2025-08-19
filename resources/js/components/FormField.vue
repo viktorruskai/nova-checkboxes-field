@@ -58,10 +58,10 @@
 </template>
 
 <script>
-import { FormField, HandlesValidationErrors } from "laravel-nova";
+import { DependentFormField, FormField, HandlesValidationErrors } from "laravel-nova";
 
 export default {
-    mixins: [FormField, HandlesValidationErrors],
+    mixins: [DependentFormField, FormField, HandlesValidationErrors],
 
     props: ["resourceName", "resourceId", "field"],
 
