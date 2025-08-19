@@ -5,10 +5,11 @@
       :show-help-text="showHelpText"
   >
     <template #field>
-      <div v-if="currentField.withGroups">
+      <div class="tw-w-full tw-columns-2" v-if="currentField.withGroups">
         <div
             v-for="(groupOptions, group) in currentField.options"
             :key="group"
+            class="tw-mb-4"
         >
           <h3>{{ group }}</h3>
           <div v-for="(label, value) in groupOptions" :key="value">
@@ -27,20 +28,23 @@
           </div>
         </div>
       </div>
-      <div v-else>
+      <div class="tw-w-full tw-columns-2" v-else>
         <div
             v-for="(label, value) in currentField.options"
             :key="value"
+            class="tw-flex tw-mb-2"
         >
           <input
               type="checkbox"
               :id="`${currentField.attribute}-${value}`"
               :checked="isChecked(value)"
               @change="toggleOption(value)"
+              class="tw-mr-2"
           />
           <label
               :for="`${currentField.attribute}-${value}`"
               @click="toggleOption(value)"
+              class="tw-leading-tight"
           >
             {{ label }}
           </label>
