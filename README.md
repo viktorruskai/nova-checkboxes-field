@@ -1,4 +1,4 @@
-# Nova Percent Field
+# Nova Checkboxes Field
 
 [![License](https://poser.pugx.org/idez/nova-checkboxes-field/license)](https://packagist.org/packages/idez/nova-checkboxes-field)
 [![Latest Stable Version](https://poser.pugx.org/idez/nova-checkboxes-field/v/stable)](https://packagist.org/packages/idez/nova-checkboxes-field)
@@ -11,7 +11,7 @@ This is a custom field of checkboxes from Laravel Nova 4.
 ## Requirements
 
 -   `php: ^7.3|^8.0|^8.1`
--   `laravel/nova: ^4.0`
+-   `laravel/nova: ^5.0`
 
 ## Installation
 
