@@ -71,12 +71,15 @@ export default {
         },
 
         toggleOption(option) {
-            if (this.isChecked(option)) {
-                this.value = this.value.filter((item) => item != option);
-                return;
-            }
+          let updated = Array.isArray(this.value) ? [...this.value] : [];
 
-            this.value.push(option);
+          if (updated.includes(option)) {
+            updated = updated.filter((item) => item !== option);
+          } else {
+            updated.push(option);
+          }
+
+          this.$emit("input", updated);
         },
 
         /*
