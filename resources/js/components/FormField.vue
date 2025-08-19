@@ -1,100 +1,103 @@
 <template>
-    <DefaultField
-        :field="field"
-        :errors="errors"
-        :show-help-text="showHelpText"
-    >
-        <template #field>
-            <div class="tw-w-full tw-columns-2" v-if="field.withGroups">
-                <div
-                    v-for="(groupOptions, group) in field.options"
-                    :key="group"
-                    class="tw-mb-4"
-                >
-                    <h3 class="tw-my-2 tw-text-lg tw-font-semibold">
-                        {{ group }}
-                    </h3>
-                    <div
-                        v-for="(label, value) in groupOptions"
-                        :key="value"
-                        class="tw-flex tw-mb-2"
-                    >
-                        <checkbox
-                            :value="value"
-                            :checked="isChecked(value)"
-                            @input="toggleOption(value)"
-                        />
-                        <label
-                            :for="field.name"
-                            v-text="label"
-                            @click="toggleOption(value)"
-                            class="tw-w-full tw-ml-2"
-                        ></label>
-                    </div>
-                </div>
-            </div>
-            <div class="tw-w-full tw-columns-2" v-else>
-                <div
-                    v-for="(label, value) in field.options"
-                    :key="value"
-                    class="tw-flex tw-mb-2"
-                >
-                    <checkbox
-                        :value="value"
-                        :checked="isChecked(value)"
-                        @input="toggleOption(value)"
-                        class="tw-mr-2"
-                    />
-                    <label
-                        :for="field.name"
-                        v-text="label"
-                        @click="toggleOption(value)"
-                        class="tw-leading-tight"
-                    ></label>
-                </div>
-            </div>
-        </template>
-    </DefaultField>
+  <DefaultField
+      :field="currentField"
+      :errors="errors"
+      :show-help-text="showHelpText"
+  >
+    <template #field>
+      <!-- Grouped options -->
+      <div class="tw-w-full tw-columns-2" v-if="currentField.withGroups">
+        <div
+            v-for="(groupOptions, group) in currentField.options"
+            :key="group"
+            class="tw-mb-4"
+        >
+          <h3 class="tw-my-2 tw-text-lg tw-font-semibold">
+            {{ group }}
+          </h3>
+
+          <div
+              v-for="(label, value) in groupOptions"
+              :key="value"
+              class="tw-flex tw-mb-2"
+          >
+            <checkbox
+                :id="`${currentField.attribute}-${value}`"
+                :value="value"
+                :checked="isChecked(value)"
+                @input="toggleOption(value)"
+                class="tw-mr-2"
+            />
+            <label
+                :for="`${currentField.attribute}-${value}`"
+                v-text="label"
+                class="tw-leading-tight tw-w-full tw-ml-2 cursor-pointer"
+                @click="toggleOption(value)"
+            ></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flat options -->
+      <div class="tw-w-full tw-columns-2" v-else>
+        <div
+            v-for="(label, value) in currentField.options"
+            :key="value"
+            class="tw-flex tw-mb-2"
+        >
+          <checkbox
+              :id="`${currentField.attribute}-${value}`"
+              :value="value"
+              :checked="isChecked(value)"
+              @input="toggleOption(value)"
+              class="tw-mr-2"
+          />
+          <label
+              :for="`${currentField.attribute}-${value}`"
+              v-text="label"
+              class="tw-leading-tight cursor-pointer"
+              @click="toggleOption(value)"
+          ></label>
+        </div>
+      </div>
+    </template>
+  </DefaultField>
 </template>
 
 <script>
-import { DependentFormField, HandlesValidationErrors } from "laravel-nova";
+import {DependentFormField, HandlesValidationErrors} from "laravel-nova";
 
 export default {
-    mixins: [DependentFormField, HandlesValidationErrors],
+  mixins: [DependentFormField, HandlesValidationErrors],
+  props: ["resourceName", "resourceId", "field"],
 
-    props: ["resourceName", "resourceId", "field"],
-
-    methods: {
-        isChecked(option) {
-            return this.value ? this.value.includes(option) : false;
-        },
-
-        toggleOption(option) {
-          let updated = Array.isArray(this.value) ? [...this.value] : [];
-
-          if (updated.includes(option)) {
-            updated = updated.filter((item) => item !== option);
-          } else {
-            updated.push(option);
-          }
-
-          this.$emit("input", updated);
-        },
-
-        /*
-         * Set the initial, internal value for the field.
-         */
-        setInitialValue() {
-            this.value = this.field.value || [];
-        },
-
-        /**
-         * Fill the given FormData object with the field's internal value.
-         */
-        fill(formData) {
-            formData.append(this.field.attribute, this.value || []);
-        },
+  methods: {
+    isChecked(option) {
+      return Array.isArray(this.value) && this.value.includes(option);
     },
+
+    toggleOption(option) {
+      let updated = Array.isArray(this.value) ? [...this.value] : [];
+      updated = updated.includes(option)
+          ? updated.filter((v) => v !== option)
+          : [...updated, option];
+
+      this.$emit("input", updated);
+    },
+
+    // Nova calls this to initialize the field's value
+    setInitialValue() {
+      this.value = Array.isArray(this.field.value) ? this.field.value : [];
+    },
+
+    // Use the helper so the field doesn't submit when hidden
+    fill(formData) {
+      this.fillIfVisible(
+          formData,
+          this.fieldAttribute,
+          JSON.stringify(this.value || [])
+      );
+    },
+  },
 };
 </script>
