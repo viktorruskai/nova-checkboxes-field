@@ -11,8 +11,10 @@
             :key="group"
             class="tw-mb-4"
         >
-          <h3>{{ group }}</h3>
-          <div v-for="(label, value) in groupOptions" :key="value">
+          <h3 class="tw-my-2 tw-text-lg tw-font-semibold">
+            {{ group }}
+          </h3>
+          <div v-for="(label, value) in groupOptions" :key="value" class="tw-flex tw-mb-2">
             <input
                 type="checkbox"
                 :id="`${currentField.attribute}-${value}`"
@@ -22,6 +24,7 @@
             <label
                 :for="`${currentField.attribute}-${value}`"
                 @click="toggleOption(value)"
+                class="tw-w-full tw-ml-2"
             >
               {{ label }}
             </label>
