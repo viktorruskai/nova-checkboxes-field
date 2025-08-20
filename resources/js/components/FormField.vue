@@ -19,6 +19,7 @@
                 type="checkbox"
                 :id="`${currentField.attribute}-${value}`"
                 :checked="isChecked(value)"
+                :value="value"
                 @change="toggleOption(value)"
             />
             <label
@@ -41,6 +42,7 @@
               type="checkbox"
               :id="`${currentField.attribute}-${value}`"
               :checked="isChecked(value)"
+              :value="value"
               @change="toggleOption(value)"
               class="tw-mr-2"
           />
