@@ -14,17 +14,12 @@
           <h3 class="tw-my-2 tw-text-lg tw-font-semibold">
             {{ group }}
           </h3>
-          <div
-              v-for="(label, value) in groupOptions"
-              :key="value"
-              class="tw-flex tw-mb-2"
-          >
+          <div v-for="(label, value) in groupOptions" :key="value" class="tw-flex tw-mb-2">
             <input
                 type="checkbox"
                 :id="`${currentField.attribute}-${value}`"
-                :name="`${fieldAttribute}[]`"
                 :checked="isChecked(value)"
-                @input="toggleOption(value)"
+                @change="toggleOption(value)"
                 class="tw-mr-2"
             />
             <label
@@ -37,7 +32,6 @@
           </div>
         </div>
       </div>
-
       <div class="tw-w-full tw-columns-2" v-else>
         <div
             v-for="(label, value) in currentField.options"
@@ -47,9 +41,8 @@
           <input
               type="checkbox"
               :id="`${currentField.attribute}-${value}`"
-              :name="`${fieldAttribute}[]`"
               :checked="isChecked(value)"
-              @input="toggleOption(value)"
+              @change="toggleOption(value)"
               class="tw-mr-2"
           />
           <label
@@ -75,35 +68,24 @@ export default {
     isChecked(option) {
       return Array.isArray(this.value) && this.value.includes(option);
     },
-
     toggleOption(option) {
       let updated = Array.isArray(this.value) ? [...this.value] : [];
-
-      if (updated.includes(option)) {
-        updated = updated.filter((v) => v !== option);
-      } else {
-        updated.push(option);
-      }
-
+      updated = updated.includes(option)
+          ? updated.filter(v => v !== option)
+          : [...updated, option];
       this.$emit("input", updated);
     },
-
     setInitialValue() {
       this.value = Array.isArray(this.currentField.value)
           ? this.currentField.value
           : [];
     },
-
     fill(formData) {
-      if (!this.isVisible) return;
-
-      const values = Array.isArray(this.value) ? this.value : [];
-
-      if (values.length) {
-        values.forEach(v => formData.append(this.fieldAttribute + '[]', v));
-      } else {
-        formData.append(this.fieldAttribute, JSON.stringify([]));
-      }
+      this.fillIfVisible(
+          formData,
+          this.fieldAttribute,
+          JSON.stringify(this.value || [])
+      );
     },
   },
 };

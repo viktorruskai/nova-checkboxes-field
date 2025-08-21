@@ -71,32 +71,20 @@ class Checkboxes extends Field
     }
 
     /**
-     * Hydrate the given attribute on the model based on the incoming request.
-     *
-     * @param NovaRequest $request
-     * @param  string  $requestAttribute
-     * @param  object  $model
-     * @param  string  $attribute
-     * @return void
+     * @throws JsonException
      */
-    protected function fillAttributeFromRequest(NovaRequest $request, $requestAttribute, $model, $attribute)
+    public function fillAttributeFromRequest(NovaRequest $request, string $requestAttribute, object $model, string $attribute): void
     {
-        if ($request->exists($requestAttribute)) {
-            /**
-             * Split checked options and remove unchecked options.
-             */
-            if (!is_array($checkedOptions = $request[$requestAttribute])) {
-                $checkedOptions = collect(explode(',', $checkedOptions))
-                    ->reject(fn ($name) => empty($name))
-                    ->all();
-            }
+        $value = $request[$requestAttribute] ?? '[]';
 
-            if (isset($this->setValueCallback)) {
-                return call_user_func($this->setValueCallback, $model, $attribute, $checkedOptions);
+        if (is_string($value)) {
+            $decoded = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $value = $decoded;
             }
-
-            $model->{$attribute} = $checkedOptions;
         }
+
+        $model->{$attribute} = $value;
     }
 
     /**
