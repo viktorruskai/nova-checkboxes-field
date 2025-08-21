@@ -71,7 +71,14 @@ export default {
       updated = updated.includes(option)
           ? updated.filter(v => v !== option)
           : [...updated, option];
+
+      // Update local state to ensure immediate UI feedback
+      this.value = updated;
+
+      // Emit events for Nova/Vue compatibility
+      this.$emit("update:value", updated);
       this.$emit("input", updated);
+      this.$emit("change", updated);
     },
     setInitialValue() {
       this.value = Array.isArray(this.currentField.value)
