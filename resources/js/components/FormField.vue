@@ -42,7 +42,6 @@
               type="checkbox"
               :id="`${currentField.attribute}-${value}`"
               :checked="isChecked(value)"
-              :value="value"
               @change="toggleOption(value)"
               class="tw-mr-2"
           />
@@ -82,15 +81,14 @@ export default {
           : [];
     },
     fill(formData) {
+      this.fillIfVisible(formData, this.fieldAttribute, '');
 
-      console.log(this.value, formData, '----');
-
-      this.fillIfVisible(
-          formData,
-          this.fieldAttribute,
-          JSON.stringify(this.value || [])
-      );
-    },
+      if (Array.isArray(this.value)) {
+        this.value.forEach(val => {
+          formData.append(this.fieldAttribute + '[]', val);
+        });
+      }
+    }
   },
 };
 </script>
