@@ -25,7 +25,6 @@
             <label
                 :for="`${currentField.attribute}-${value}`"
                 class="tw-leading-tight cursor-pointer"
-                @click="toggleOption(value)"
             >
               {{ label }}
             </label>
@@ -48,7 +47,6 @@
           <label
               :for="`${currentField.attribute}-${value}`"
               class="tw-leading-tight cursor-pointer"
-              @click="toggleOption(value)"
           >
             {{ label }}
           </label>
