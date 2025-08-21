@@ -82,7 +82,14 @@ export default {
           : [];
     },
     fill(formData) {
-      formData.append(this.currentField.attribute, this.value || []);
+
+      console.log(this.value, formData, '----');
+
+      this.fillIfVisible(
+          formData,
+          this.fieldAttribute,
+          JSON.stringify(this.value || [])
+      );
     },
   },
 };
