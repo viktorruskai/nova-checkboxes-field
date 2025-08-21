@@ -14,24 +14,29 @@
           <h3 class="tw-my-2 tw-text-lg tw-font-semibold">
             {{ group }}
           </h3>
-          <div v-for="(label, value) in groupOptions" :key="value" class="tw-flex tw-mb-2">
+          <div
+              v-for="(label, value) in groupOptions"
+              :key="value"
+              class="tw-flex tw-mb-2"
+          >
             <input
                 type="checkbox"
                 :id="`${currentField.attribute}-${value}`"
                 :checked="isChecked(value)"
-                :value="value"
                 @change="toggleOption(value)"
+                class="tw-mr-2"
             />
             <label
                 :for="`${currentField.attribute}-${value}`"
+                class="tw-leading-tight tw-w-full tw-ml-2 cursor-pointer"
                 @click="toggleOption(value)"
-                class="tw-w-full tw-ml-2"
             >
               {{ label }}
             </label>
           </div>
         </div>
       </div>
+
       <div class="tw-w-full tw-columns-2" v-else>
         <div
             v-for="(label, value) in currentField.options"
@@ -47,8 +52,8 @@
           />
           <label
               :for="`${currentField.attribute}-${value}`"
+              class="tw-leading-tight cursor-pointer"
               @click="toggleOption(value)"
-              class="tw-leading-tight"
           >
             {{ label }}
           </label>
@@ -68,27 +73,34 @@ export default {
     isChecked(option) {
       return Array.isArray(this.value) && this.value.includes(option);
     },
+
     toggleOption(option) {
       let updated = Array.isArray(this.value) ? [...this.value] : [];
-      updated = updated.includes(option)
-          ? updated.filter(v => v !== option)
-          : [...updated, option];
+
+      if (updated.includes(option)) {
+        updated = updated.filter((v) => v !== option);
+      } else {
+        updated.push(option);
+      }
+
       this.$emit("input", updated);
     },
+
     setInitialValue() {
       this.value = Array.isArray(this.currentField.value)
           ? this.currentField.value
           : [];
     },
+
     fill(formData) {
-      this.fillIfVisible(formData, this.fieldAttribute, '');
+      this.fillIfVisible(formData, this.fieldAttribute, "");
 
       if (Array.isArray(this.value)) {
-        this.value.forEach(val => {
-          formData.append(this.fieldAttribute + '[]', val);
+        this.value.forEach((val) => {
+          formData.append(this.fieldAttribute + "[]", val);
         });
       }
-    }
+    },
   },
 };
 </script>
