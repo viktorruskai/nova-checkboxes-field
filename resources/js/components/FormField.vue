@@ -22,13 +22,14 @@
             <input
                 type="checkbox"
                 :id="`${currentField.attribute}-${value}`"
+                :name="`${fieldAttribute}[]`"
                 :checked="isChecked(value)"
-                @change="toggleOption(value)"
+                @input="toggleOption(value)"
                 class="tw-mr-2"
             />
             <label
                 :for="`${currentField.attribute}-${value}`"
-                class="tw-leading-tight tw-w-full tw-ml-2 cursor-pointer"
+                class="tw-leading-tight cursor-pointer"
                 @click="toggleOption(value)"
             >
               {{ label }}
@@ -46,8 +47,9 @@
           <input
               type="checkbox"
               :id="`${currentField.attribute}-${value}`"
+              :name="`${fieldAttribute}[]`"
               :checked="isChecked(value)"
-              @change="toggleOption(value)"
+              @input="toggleOption(value)"
               class="tw-mr-2"
           />
           <label
@@ -93,12 +95,14 @@ export default {
     },
 
     fill(formData) {
-      this.fillIfVisible(formData, this.fieldAttribute, "");
+      if (!this.isVisible) return;
 
-      if (Array.isArray(this.value)) {
-        this.value.forEach((val) => {
-          formData.append(this.fieldAttribute + "[]", val);
-        });
+      const values = Array.isArray(this.value) ? this.value : [];
+
+      if (values.length) {
+        values.forEach(v => formData.append(this.fieldAttribute + '[]', v));
+      } else {
+        formData.append(this.fieldAttribute, JSON.stringify([]));
       }
     },
   },

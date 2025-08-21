@@ -2,6 +2,7 @@
 
 namespace Idez\NovaCheckboxesField;
 
+use JsonException;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Fields\SupportsDependentFields;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -62,7 +63,7 @@ class Checkboxes extends Field
      * Override default method to avoid errors. Use setValueUsing to customize the model atribute hydratation.
      *
      * @param $fillCallback
-     * @return \Idez\NovaCheckboxesField\Checkboxes
+     * @return Checkboxes
      */
     public function fillUsing($fillCallback): Checkboxes
     {
@@ -72,7 +73,7 @@ class Checkboxes extends Field
     /**
      * Hydrate the given attribute on the model based on the incoming request.
      *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param NovaRequest $request
      * @param  string  $requestAttribute
      * @param  object  $model
      * @param  string  $attribute
@@ -96,5 +97,24 @@ class Checkboxes extends Field
 
             $model->{$attribute} = $checkedOptions;
         }
+    }
+
+    /**
+     * @throws JsonException
+     */
+    public function fillModelWithData(object $model, mixed $value, string $attribute): void
+    {
+        if (is_string($value)) {
+            $decoded = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $value = $decoded;
+            }
+        }
+
+        if (!is_array($value)) {
+            $value = $value === null ? [] : (array)$value;
+        }
+
+        data_set($model, $attribute, $value);
     }
 }
